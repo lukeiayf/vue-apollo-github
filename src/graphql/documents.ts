@@ -34,6 +34,32 @@ const REPO_FRAGMENT = gql`
   }
 `;
 
+const USER_FRAGMENT = gql`
+  fragment user on User {
+    id
+    name
+    login
+    avatarUrl
+    bio
+    repositories(first: 10, ) {
+      totalCount
+      edges {
+        cursor
+        node {
+          id
+          name
+          description
+          updatedAt
+          primaryLanguage {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const ADD_STAR = gql`
   mutation($repositoryId: ID!) {
     addStar(input: { starrableId: $repositoryId }) {
@@ -57,7 +83,7 @@ export const REMOVE_STAR = gql`
 `;
 
 export const SEARCH_REPOS = gql`
-  ${REPO_FRAGMENT}
+  ${REPO_FRAGMENT},
 
   query SearchRepoQuery($query: String!, $limit: Int!) {
     search(query: $query, type: REPOSITORY, first: $limit) {
@@ -69,3 +95,18 @@ export const SEARCH_REPOS = gql`
     }
   }
 `;
+
+export const SEARCH_USERS = gql`
+  ${USER_FRAGMENT},
+
+  query SearchUserQuery($query: String!, $limit: Int!) {
+    search(query: $query, type: USER, first: $limit) {
+      edges {
+        node {
+          ...user
+        }
+      }
+    }
+  }
+`;
+  
